@@ -1,0 +1,73 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://TestScene_FullSetDiffuse.jpg" type="Texture" id=1]
+[ext_resource path="res://CubeMapTest_4_TestTiles_8K_ProperColors.png" type="Texture" id=2]
+[ext_resource path="res://TestCube.gd" type="Script" id=3]
+[ext_resource path="res://HUD.gd" type="Script" id=4]
+[ext_resource path="res://Camera.gd" type="Script" id=5]
+
+[sub_resource type="CubeMesh" id=1]
+flip_faces = true
+size = Vector3( 10, 10, 10 )
+
+[sub_resource type="SpatialMaterial" id=3]
+flags_unshaded = true
+albedo_texture = ExtResource( 1 )
+
+[sub_resource type="SpatialMaterial" id=2]
+flags_unshaded = true
+albedo_texture = ExtResource( 2 )
+
+[node name="TestCube" type="Spatial"]
+script = ExtResource( 3 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
+cull_mask = 1048559
+script = ExtResource( 5 )
+
+[node name="RemoteTransform" type="RemoteTransform" parent="Camera"]
+remote_path = NodePath("../../HiddenViewport/HiddenCamera")
+
+[node name="Cube" type="MeshInstance" parent="."]
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )
+
+[node name="HiddenViewport" type="Viewport" parent="."]
+size = Vector2( 1024, 600 )
+render_target_update_mode = 3
+
+[node name="HiddenCamera" type="Camera" parent="HiddenViewport"]
+transform = Transform( -1, 0, -3.25841e-07, 0, 1, 0, 3.25841e-07, 0, -1, 0, 0, 0 )
+cull_mask = 16
+
+[node name="HiddenCube" type="MeshInstance" parent="HiddenViewport"]
+layers = 16
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="HUD" type="HBoxContainer" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="HUD"]
+margin_top = 13.0
+margin_right = 81.0
+margin_bottom = 27.0
+text = "Hidden Pixel"
+
+[node name="ColorRect" type="ColorRect" parent="HUD"]
+margin_left = 85.0
+margin_right = 125.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 40, 40 )
+
+[node name="ColorValue" type="Label" parent="HUD"]
+margin_left = 129.0
+margin_top = 13.0
+margin_right = 129.0
+margin_bottom = 27.0
